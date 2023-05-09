@@ -21,5 +21,10 @@ $ ssh-keygen -t ed25519 -C "your_email@example.com"
 $ eval "$(ssh-agent -s)"
 > Agent pid 59566
 $ ssh-add ~/.ssh/id_ed25519
+```
 
+- Configure identity
+```
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
 ```
