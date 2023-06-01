@@ -28,3 +28,9 @@ $ ssh-add ~/.ssh/id_ed25519
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 ```
+
+### Permissions
+- Recommended
+```
+chmod  400 ~/.ssh/id_ed25519
+```
