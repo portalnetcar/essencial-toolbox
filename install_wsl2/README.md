@@ -16,6 +16,10 @@ wsl --shutdown
 
 wsl --install Ubuntu-22.04
 
+exit 
+
+wsl --list -v
+
 wsl -d Ubuntu-22.04
 
 
