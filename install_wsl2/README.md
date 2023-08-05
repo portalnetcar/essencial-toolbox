@@ -22,13 +22,31 @@ wsl --list -v
 
 wsl -d Ubuntu-22.04
 
+cat /etc/issue
+
 
 ## Enable systemd by running the following command in the WSL terminal:
 
 echo -e "[boot]\nsystemd=true" | sudo tee /etc/wsl.conf
 
+cat /etc/wsl.conf
+
+
 ## Exit the WSL terminal, then restart WSL.
 
+exit
+
+wsl --list -v
+
+wsl --shutdown
+
+wsl --list -v
+
+wsl -d Ubuntu-22.04
+
+sudo apt update
+
+sudo apt upgrade 
 
 sudo apt install make
 
@@ -43,5 +61,14 @@ lspci | grep -i vga
 lspci | grep VGA
 
 nvidia-smi
+
 sudo apt install nvidia-cuda-toolkit
+
 nvcc --version
+
+lspci | grep -i vga
+
+lspci | grep VGA
+
+nvidia-smi
+
