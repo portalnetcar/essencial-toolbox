@@ -29,6 +29,12 @@ git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 ```
 
+Go to your users settings on Github to add public key on your account.
+
+Menu -> Settings -> SSH and GPG Keys -> New SSH Key
+
+Put the content of public key.
+
 ### Permissions
 - Recommended
 ```
