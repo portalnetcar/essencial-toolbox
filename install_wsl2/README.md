@@ -64,11 +64,9 @@ nvidia-smi
 
 sudo apt install nvidia-cuda-toolkit
 
+Get Cuda driver - https://developer.nvidia.com/cuda-downloads
+
 nvcc --version
-
-lspci | grep -i vga
-
-lspci | grep VGA
 
 nvidia-smi
 
