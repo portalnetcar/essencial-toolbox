@@ -5,7 +5,11 @@ Install PowerShell from Windows App Store (Developer Tools) for maximum compabil
 
 wsl --update
 
+<img align="center" alt="ubuntu2204" src="https://github.com/portalnetcar/essencial-toolbox/blob/main/install_wsl2/imgs/wsl_update_en.jpeg">
+
 wsl --set-default-version 2
+
+<img align="center" alt="ubuntu2204" src="https://github.com/portalnetcar/essencial-toolbox/blob/main/install_wsl2/imgs/wsl_setversion2_en.jpeg">
 
 Create ".wslconfig" file on user path, using the example file ".wslconfig" in this repo. (download)
 
@@ -21,6 +25,8 @@ exit
 wsl --list -v
 
 wsl -d Ubuntu-22.04
+
+install_wsl2/imgs/ubuntu2204_install_en.jpeg
 
 cat /etc/issue
 
@@ -43,6 +49,9 @@ wsl --shutdown
 wsl --list -v
 
 wsl -d Ubuntu-22.04
+
+
+  <img align="center" alt="ubuntu2204" src="https://github.com/portalnetcar/essencial-toolbox/blob/main/install_wsl2/imgs/ubuntu2204_install_en.jpeg">
 
 sudo apt update
 
