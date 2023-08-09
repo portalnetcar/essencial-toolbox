@@ -26,7 +26,6 @@ wsl --list -v
 
 wsl -d Ubuntu-22.04
 
-install_wsl2/imgs/ubuntu2204_install_en.jpeg
 
 cat /etc/issue
 
@@ -37,6 +36,7 @@ echo -e "[boot]\nsystemd=true" | sudo tee /etc/wsl.conf
 
 cat /etc/wsl.conf
 
+<img align="center" alt="ooppss..." src="https://github.com/portalnetcar/essencial-toolbox/blob/main/install_wsl2/imgs/wsl_ubuntu_systemd_en.jpeg">
 
 ## Exit the WSL terminal, then restart WSL.
 
