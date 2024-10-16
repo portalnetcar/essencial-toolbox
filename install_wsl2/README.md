@@ -3,6 +3,16 @@
 Install PowerShell from Windows App Store (Developer Tools) for maximum compability with informations provided.
 (https://github.com/powershell/powershell)
 
+## Link
+- https://aka.ms/wsl2
+- https://learn.microsoft.com/en-us/windows/wsl/install-manual#step-2---check-requirements-for-running-wsl-2
+
+## Enable Virtual Machine feature
+- Open PowerShell as Administrator and run:
+```
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+```
+
 wsl --update
 
 <img align="center" alt="ubuntu2204" src="https://github.com/portalnetcar/essencial-toolbox/blob/main/install_wsl2/imgs/wsl_update_en.jpeg">
@@ -12,6 +22,8 @@ wsl --set-default-version 2
 <img align="center" alt="ubuntu2204" src="https://github.com/portalnetcar/essencial-toolbox/blob/main/install_wsl2/imgs/wsl_setversion2_en.jpeg">
 
 Create ".wslconfig" file on user path, using the example file ".wslconfig" in this repo. (download)
+
+wsl --list --online
 
 wsl --list -v
 
