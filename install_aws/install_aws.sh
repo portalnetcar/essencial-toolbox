@@ -23,7 +23,7 @@ fi
 
 # Pre-create local AWS configuration
 mkdir -p ~/.aws
-echo -e "[default]\nregion = us-west-2\noutput = json" > ~/.aws/config
+echo -e "[default]\nregion = us-east-1\noutput = json" > ~/.aws/config
 echo -e "[default]\naws_access_key_id = YOUR_ACCESS_KEY\naws_secret_access_key = YOUR_SECRET_KEY" > ~/.aws/credentials
 
 # Inform the user
