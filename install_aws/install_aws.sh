@@ -1,36 +1,77 @@
 #!/bin/bash
 
-# Exit on any error
+# Exit immediately if a command exits with a non-zero status
 set -e
 
-# Navigate to Downloads directory
+# Variables
+AWS_CLI_URL="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+AWS_CLI_ZIP="awscliv2.zip"
+INSTALL_DIR="/usr/local/aws-cli"
+BIN_DIR="/usr/local/bin"
+AWS_DIR="$HOME/.aws"
+
+# Move to Downloads directory
 cd ~/Downloads
 
-# Download the AWS CLI v2
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-
-# Unzip the AWS CLI v2 package
-unzip awscliv2.zip
-
-# Install (or update) the AWS CLI
-# Install (or update) the AWS CLI
-if [ -d "/usr/local/aws-cli/v2/current" ]; then
-    echo "Existing AWS CLI installation found. Updating..."
-    sudo ./aws/install --bin-dir /usr/local/bin --install-dir /usr/local/aws-cli --update
-else
-    sudo ./aws/install -i /usr/local/aws-cli -b /usr/local/bin
+# Cleanup old downloads and extracted files
+if [ -f "$AWS_CLI_ZIP" ]; then
+    echo "Removing old AWS CLI zip file..."
+    rm -f "$AWS_CLI_ZIP"
 fi
 
-# Pre-create local AWS configuration
-mkdir -p ~/.aws
-echo -e "[default]\nregion = us-east-1\noutput = json" > ~/.aws/config
-echo -e "[default]\naws_access_key_id = YOUR_ACCESS_KEY\naws_secret_access_key = YOUR_SECRET_KEY" > ~/.aws/credentials
+if [ -d "aws" ]; then
+    echo "Removing old AWS CLI extracted files..."
+    rm -rf aws
+fi
 
-# Inform the user
-echo "Please update ~/.aws/credentials with your AWS access and secret keys."
+# Download the latest AWS CLI package
+echo "Downloading AWS CLI..."
+curl -s "$AWS_CLI_URL" -o "$AWS_CLI_ZIP"
 
-# Verify the installation
+# Unzip the package
+echo "Extracting AWS CLI..."
+unzip -q "$AWS_CLI_ZIP"
+
+# Check if AWS CLI is already installed
+if command -v aws &> /dev/null; then
+    echo "AWS CLI is already installed. Updating..."
+    sudo ./aws/install --bin-dir "$BIN_DIR" --install-dir "$INSTALL_DIR" --update
+else
+    echo "Installing AWS CLI..."
+    sudo ./aws/install -i "$INSTALL_DIR" -b "$BIN_DIR"
+fi
+
+# Backup existing AWS configuration files
+if [ -d "$AWS_DIR" ]; then
+    echo "Backing up existing AWS configuration..."
+    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+    cp -r "$AWS_DIR" "${AWS_DIR}_backup_$TIMESTAMP"
+fi
+
+# Create AWS config and credentials files if they don't exist
+mkdir -p "$AWS_DIR"
+
+CONFIG_FILE="$AWS_DIR/config"
+CREDENTIALS_FILE="$AWS_DIR/credentials"
+
+if [ ! -f "$CONFIG_FILE" ]; then
+    echo "Creating default AWS CLI config..."
+    echo -e "[default]\nregion = us-east-1\noutput = json" > "$CONFIG_FILE"
+fi
+
+if [ ! -f "$CREDENTIALS_FILE" ]; then
+    echo "Creating placeholder AWS CLI credentials..."
+    echo -e "[default]\naws_access_key_id = YOUR_ACCESS_KEY\naws_secret_access_key = YOUR_SECRET_KEY" > "$CREDENTIALS_FILE"
+    echo "Please update '$CREDENTIALS_FILE' with your AWS access and secret keys."
+fi
+
+# Verify installation
+echo "Verifying AWS CLI installation..."
 aws --version
 
-echo "AWS CLI installation completed!"
+# Cleanup extracted files
+echo "Cleaning up..."
+rm -f "$AWS_CLI_ZIP"
+rm -rf aws
 
+echo "AWS CLI installation/update completed successfully!"
