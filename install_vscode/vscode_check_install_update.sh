@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Verifica se o VSCode já está instalado
+# Check vscode installed
 if command -v code >/dev/null 2>&1; then
     echo "VSCode is already installed."
 else
     echo "VSCode not found. Installing now..."
     
-    # Instalação do Visual Studio Code
+    # install Visual Studio Code
     if [ "$(uname)" == "Darwin" ]; then
         # macOS
         if ! command -v brew >/dev/null 2>&1; then
@@ -30,7 +30,7 @@ else
     fi
 fi
 
-# Atualiza o Visual Studio Code
+# update Visual Studio Code
 echo "Checking for updates..."
 
 if [ "$(uname)" == "Darwin" ]; then
