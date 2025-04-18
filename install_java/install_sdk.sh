@@ -34,7 +34,7 @@ case "$OS" in
         ;;
 esac
 
-# Install or update SDKMAN
+# Install or update SDKMAN and source it for the current session
 if command -v sdk &> /dev/null; then
     echo "SDKMAN already installed. Updating..."
     source "$SDKMAN_DIR/bin/sdkman-init.sh"
@@ -42,22 +42,48 @@ if command -v sdk &> /dev/null; then
 else
     echo "Installing SDKMAN..."
     curl -s "$SDKMAN_INSTALL_URL" | bash
-fi
-
-# Initialize SDKMAN in current shell session
-if [ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]; then
-    # shellcheck source=/dev/null
-    source "$SDKMAN_DIR/bin/sdkman-init.sh"
-    echo "SDKMAN initialization script sourced."
-else
-    echo "Initialization script not found. Please add the following to your shell profile and restart your session:"
-    echo "  source '$SDKMAN_DIR/bin/sdkman-init.sh'"
-    exit 1
+    # Source SDKMAN scripts to make 'sdk' available right away
+    if [ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]; then
+        # shellcheck source=/dev/null
+        source "$SDKMAN_DIR/bin/sdkman-init.sh"
+    else
+        echo "Error: Could not find SDKMAN init script at $SDKMAN_DIR/bin/sdkman-init.sh"
+        exit 1
+    fi
 fi
 
 # Verify installation
-echo "Verifying SDKMAN installation..."
+echo "Verifying SDKMAN availability..."
+if ! command -v sdk &> /dev/null; then
+    echo "Error: 'sdk' command not found. You may need to restart your shell or source the init script manually:"
+    echo "  source '$SDKMAN_DIR/bin/sdkman-init.sh'"
+    exit 1
+fi
 sdk version
 
-echo "SDKMAN installation/update completed successfully!"
+# Install latest GraalVM
+echo "Installing latest GraalVM..."
+graalvm_id=$(sdk list java | awk '/grl\$/ {print $NF; exit}')
+if sdk current java | grep -q "$graalvm_id"; then
+    echo "GraalVM $graalvm_id already installed."
+else
+    sdk install java "$graalvm_id"
+fi
 
+# Install or upgrade Maven
+echo "Installing/upgrading Maven..."
+if sdk current maven | grep -q 'Using'; then
+    sdk upgrade maven
+else
+    sdk install maven
+fi
+
+# Install or upgrade Gradle
+echo "Installing/upgrading Gradle..."
+if sdk current gradle | grep -q 'Using'; then
+    sdk upgrade gradle
+else
+    sdk install gradle
+fi
+
+echo "SDKMAN candidate installations completed successfully!"
