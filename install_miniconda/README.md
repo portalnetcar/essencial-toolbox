@@ -1,5 +1,28 @@
 ## Miniconda
 
+### How to use
+
+# 1. Ensure conda is available
+conda --version
+
+# 2. Update conda (recommended)
+conda update -n base -c defaults conda
+
+# 3. Create a new environment named "myenv" with Python 3.12
+conda create -n testenv python=3.12
+
+# init 
+conda init zsh
+
+
+# 4. Activate the new environment
+conda activate testenv
+
+# 5. (Optional) Verify Python version
+python --version
+
+
+
 ### How the best option? Conda or Miniconda?
 
 Both [Conda](https://docs.conda.io/projects/conda/en/latest/) and [Miniconda](https://docs.conda.io/en/latest/miniconda.html) are popular tools for managing Python packages and dependencies in a cross-platform way, but they have different use cases:
