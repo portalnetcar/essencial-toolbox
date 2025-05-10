@@ -1,5 +1,10 @@
 ## Miniconda
 
+
+### install
+curl -sSL -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/portalnetcar/essencial-toolbox/develop/install_miniconda/install_miniconda.sh | bash
+
+
 ### How to use
 
 # 1. Ensure conda is available
