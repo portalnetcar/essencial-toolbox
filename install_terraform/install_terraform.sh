@@ -4,70 +4,75 @@
 set -e
 
 # === Configuration ===
-TERRAFORM_BASE_URL="https://releases.hashicorp.com/terraform"
 INSTALL_DIR="/usr/local/bin"
 DOWNLOAD_DIR="$HOME/Downloads"
+BACKUP_DIR="$HOME/.terraform-backups"
 TERRAFORM_BIN="$INSTALL_DIR/terraform"
-ARCH="amd64"
-OS="linux"
+TERRAFORM_BASE_URL="https://releases.hashicorp.com/terraform"
+
+# Detect architecture and OS
+ARCH=$(uname -m)
+OS=$(uname | tr '[:upper:]' '[:lower:]')
+
+case "$ARCH" in
+    x86_64) PLATFORM_ARCH="amd64" ;;
+    arm64|aarch64) PLATFORM_ARCH="arm64" ;;
+    *) echo "❌ Unsupported architecture: $ARCH"; exit 1 ;;
+esac
+
+case "$OS" in
+    linux|darwin) PLATFORM_OS="$OS" ;;
+    *) echo "❌ Unsupported OS: $OS"; exit 1 ;;
+esac
 
 # === Functions ===
 
-# Get latest Terraform version
 get_latest_version() {
     curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | grep -oP '"current_version":\s*"\K[0-9\.]+'
 }
 
-# === Script Execution ===
+# === Begin Installation ===
 
-# Move to Downloads directory
+mkdir -p "$DOWNLOAD_DIR"
 cd "$DOWNLOAD_DIR"
 
 # Get latest version dynamically
-echo "Checking latest Terraform version..."
+echo "🔍 Checking latest Terraform version..."
 LATEST_VERSION=$(get_latest_version)
-echo "Latest Terraform version: $LATEST_VERSION"
+echo "📦 Latest version: $LATEST_VERSION"
 
-# Construct filename and URL
-TERRAFORM_ZIP="terraform_${LATEST_VERSION}_${OS}_${ARCH}.zip"
-TERRAFORM_URL="$TERRAFORM_BASE_URL/${LATEST_VERSION}/${TERRAFORM_ZIP}"
+TERRAFORM_ZIP="terraform_${LATEST_VERSION}_${PLATFORM_OS}_${PLATFORM_ARCH}.zip"
+TERRAFORM_URL="${TERRAFORM_BASE_URL}/${LATEST_VERSION}/${TERRAFORM_ZIP}"
 
-# Cleanup previous downloads
-if [ -f "$TERRAFORM_ZIP" ]; then
-    echo "Removing old Terraform zip file..."
-    rm -f "$TERRAFORM_ZIP"
-fi
-
-if [ -f "terraform" ]; then
-    echo "Removing old Terraform binary from Downloads..."
-    rm -f terraform
-fi
+# Cleanup old files
+rm -f terraform "$TERRAFORM_ZIP"
 
 # Download Terraform
-echo "Downloading Terraform $LATEST_VERSION..."
+echo "⬇️ Downloading Terraform for $PLATFORM_OS/$PLATFORM_ARCH..."
 curl -s -O "$TERRAFORM_URL"
 
 # Extract the binary
-echo "Extracting Terraform..."
+echo "📂 Extracting..."
 unzip -q "$TERRAFORM_ZIP"
 
-# Backup existing Terraform binary if exists
+# Backup existing version
 if [ -f "$TERRAFORM_BIN" ]; then
-    echo "Existing Terraform found. Backing up..."
-    sudo mv "$TERRAFORM_BIN" "${TERRAFORM_BIN}_backup_$(date +%Y%m%d_%H%M%S)"
+    echo "🔁 Backing up current Terraform binary..."
+    mkdir -p "$BACKUP_DIR"
+    sudo mv "$TERRAFORM_BIN" "$BACKUP_DIR/terraform_backup_$(date +%Y%m%d_%H%M%S)"
 fi
 
-# Move the new binary to install dir
-echo "Installing Terraform to $INSTALL_DIR..."
-sudo mv terraform "$INSTALL_DIR/"
+# Install new binary
+echo "🚀 Installing Terraform to $INSTALL_DIR..."
+sudo mv terraform "$TERRAFORM_BIN"
 sudo chmod +x "$TERRAFORM_BIN"
 
 # Verify installation
-echo "Verifying Terraform installation..."
+echo "✅ Verifying installation..."
 terraform version
 
-# Cleanup
-echo "Cleaning up..."
+# Final cleanup
+echo "🧹 Cleaning up..."
 rm -f "$TERRAFORM_ZIP"
 
-echo "Terraform $LATEST_VERSION installation completed successfully!"
+echo "🎉 Terraform $LATEST_VERSION installed successfully!"
