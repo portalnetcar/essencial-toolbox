@@ -28,8 +28,9 @@ esac
 # === Functions ===
 
 get_latest_version() {
-    curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | grep -oP '"current_version":\s*"\K[0-9\.]+'
+    curl -s https://checkpoint-api.hashicorp.com/v1/check/terraform | awk -F'"' '{for(i=1; i<=NF; i++) {if ($i == "current_version") {print $(i+2); exit}}}'
 }
+
 
 # === Begin Installation ===
 
