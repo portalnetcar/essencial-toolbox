@@ -53,7 +53,7 @@ main() {
 
     if [ -z "$LATEST_NVM_VERSION" ]; then
         warn "Could not fetch the latest nvm version. Using a recent stable version as a fallback."
-        LATEST_NVM_VERSION="v0.39.7" # A recent, known stable version
+        LATEST_NVM_VERSION="v0.40.3" # A recent, known stable version
     else
         info "Latest nvm version found: ${LATEST_NVM_VERSION}"
     fi
