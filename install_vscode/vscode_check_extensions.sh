@@ -1,45 +1,86 @@
-#!/bin/bash
+#!/usr/bin/env bash
+#
+# Script de Gerenciamento de Extensões do VSCode
+# Otimizado para máxima eficiência de I/O e resiliência
+# Seguro para execução via curl: curl -fsSL <url> | bash
 
-# Check if VSCode is installed
-if command -v code >/dev/null 2>&1; then
-    echo "VSCode is installed."
-else
-    echo "VSCode is not installed. Attempting to install..."
-    curl -fsSL https://raw.githubusercontent.com/portalnetcar/essencial-toolbox/main/vscode_check_install_update.sh | bash
+set -euo pipefail
 
+readonly RED='\033[0;31m'
+readonly GREEN='\033[0;32m'
+readonly YELLOW='\033[1;33m'
+readonly NC='\033[0m'
+
+log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
+log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+log_err() { echo -e "${RED}[ERROR]${NC} $1" >&2; }
+
+# URL corrigida apontando para o subdiretório install_vscode/
+readonly INSTALL_SCRIPT_URL="https://raw.githubusercontent.com/portalnetcar/essencial-toolbox/main/install_vscode/vscode_check_install_update.sh"
+
+ensure_vscode_installed() {
     if command -v code >/dev/null 2>&1; then
-        echo "VSCode has been successfully installed."
-    else
-        echo "Failed to install VSCode. Please try again."
+        log_info "CLI do VSCode ('code') detectada."
+        return 0
+    fi
+
+    log_warn "VSCode não está instalado. Iniciando instalação automatizada..."
+    
+    # Chama o script anterior de forma segura
+    if ! curl -fsSL "${INSTALL_SCRIPT_URL}" | bash; then
+        log_err "Falha catastrófica ao executar o script de instalação do VSCode."
         exit 1
     fi
-fi
 
-# List of extensions to check and install
-declare -a extensions=(
-    "golang.go"
-    "bierner.markdown-mermaid"
-    "hashicorp.terraform"
-    # Add more extensions here, e.g., "ms-python.python"
-)
-
-# Check if each extension is installed
-for extension in "${extensions[@]}"; do
-    if code --list-extensions | grep -q "$extension"; then
-        echo "Extension '$extension' is already installed."
-    else
-        echo "Extension '$extension' not found. Installing now..."
-        code --install-extension "$extension"
-
-        if [ $? -eq 0 ]; then
-            echo "Extension '$extension' has been successfully installed."
-        else
-            echo "An error occurred while installing the extension '$extension'. Please try again."
-            exit 1
-        fi
+    # Validação pós-instalação
+    if ! command -v code >/dev/null 2>&1; then
+        log_err "A instalação relatou sucesso, mas o binário 'code' não está no PATH."
+        exit 1
     fi
-done
+    log_info "VSCode instalado e carregado no PATH com sucesso."
+}
 
+manage_extensions() {
+    # Lista de extensões declarada de forma limpa
+    local -a extensions=(
+        "golang.go"
+        "bierner.markdown-mermaid"
+        "hashicorp.terraform"
+        # --- Sugestões para Engenharia de Plataforma / Cloud ---
+        # "amazonwebservices.aws-toolkit-vscode"
+        # "ms-kubernetes-tools.vscode-kubernetes-tools"
+        # "redhat.vscode-yaml" # Essencial para K8s, ArgoCD e Crossplane
+        # "ms-azuretools.vscode-docker"
+        # "github.vscode-github-actions"
+    )
 
-echo "Installed extensions: "
-code --list-extensions
+    log_info "Mapeando extensões atualmente instaladas (I/O único)..."
+    # Fazemos a chamada pesada apenas UMA VEZ e guardamos em memória
+    local installed_extensions
+    installed_extensions=$(code --list-extensions | tr '[:upper:]' '[:lower:]')
+
+    for ext in "${extensions[@]}"; do
+        # Validação case-insensitive puramente em memória (super rápido)
+        if echo "${installed_extensions}" | grep -qi "^${ext}$"; then
+            log_info "Extensão '${ext}' já está instalada."
+        else
+            log_warn "Extensão '${ext}' ausente. Instalando..."
+            # A condicional avalia diretamente o exit status do comando
+            if code --install-extension "${ext}" --force; then
+                log_info "Extensão '${ext}' instalada com sucesso!"
+            else
+                log_err "Falha ao instalar a extensão '${ext}'."
+                exit 1
+            fi
+        fi
+    done
+}
+
+main() {
+    log_info "Iniciando verificação de ambiente do VSCode..."
+    ensure_vscode_installed
+    manage_extensions
+    log_info "Provisionamento de extensões concluído."
+}
+
+main "$@"
