@@ -1,0 +1,19 @@
+=== MicroSD Performance Test (Samsung EVO Plus 128GB) ===
+Test Date: sex 07 fev 2025 15:28:36 -03
+Mount Point: /media/leosavio/A06C-FA5F
+--------------------------------------------------------
+>>> F3 Write Test Results:
+Creating file 113.h2w ... OK!
+Creating file 114.h2w ... OK!
+Creating file 115.h2w ... OK!
+Creating file 116.h2w ... OK!
+Creating file 117.h2w ... OK!
+Creating file 118.h2w ... OK!
+Creating file 119.h2w ... OK!
+Creating file 120.h2w ... OK!
+Free space: 0.00 Byte
+Average writing speed: 53.12 MB/s
+>>> F3 Read Test Results:
+>>> Sequential Write Speed: 0,0 kB/s
+>>> Sequential Read Speed: 0,0 kB/s
+>>> Random Write IOPS Test:
