@@ -1,48 +1,44 @@
-## VSCode Check, Install and Update Script and Extensions
+# VSCode Automated Setup & Provisioning
 
-This shell script checks if Visual Studio Code (VSCode) is installed on your system, and if not, it installs it. Additionally, the script checks for updates and installs them if necessary. The extensions script ensures that a set of default extensions in the portalnetcar ecosystem are installed.
+Este diretório contém uma suíte de automação *production-ready* para instalação e provisionamento do Visual Studio Code. A arquitetura dos scripts foi desenhada focando em **resiliência, eficiência de I/O e idempotência**, garantindo um setup confiável tanto em macOS (Apple Silicon/Intel) quanto em distribuições Linux baseadas em Debian/Ubuntu.
 
-## Supported Platforms
+## Como Usar (Quick Start)
 
-- macOS
-- Ubuntu/Debian Linux
+Os scripts foram otimizados para execução *one-liner* segura diretamente do repositório remoto.
 
-## Prerequisites
+### 1. Instalação do VSCode (Core)
+Instala o binário base do VSCode. No macOS, utiliza o Homebrew (baixando o binário Universal para Apple Silicon). No Linux, configura o *keyring* GPG oficial da Microsoft e instala via APT.
 
-- macOS: [Homebrew](https://brew.sh/) should be installed.
-- Ubuntu/Debian Linux: User must have `sudo` permissions to install and update packages.
-
-## Usage Install VSCode
-
-1. Save the script as `vscode_check_install_update.sh` on your local machine.
-2. Make the script executable by running the following command:
-
-   ```bash
-   chmod +x vscode_check_install_update.sh
-
-## Or
-
-1. You can run using curl:
-```
+```bash
 curl -fsSL https://raw.githubusercontent.com/portalnetcar/essencial-toolbox/main/install_vscode/vscode_check_install_update.sh | bash
-```
-2. This command downloads the script and pipes it directly to bash for execution. 
 
-- Tested in:
-1. Ubuntu 22.04 WLS2
-2. Ubuntu 22.04
-
-## Usage Install VSCode Extensions
-1. You can run using curl:
 ```
+
+### 2. Provisionamento de Extensões Essenciais
+
+Verifica a presença da CLI do VSCode e instala um *baseline* de extensões voltadas para Platform Engineering, Devops, Cloud Architecture (AWS) e IA.
+
+```bash
 curl -fsSL https://raw.githubusercontent.com/portalnetcar/essencial-toolbox/main/install_vscode/vscode_check_extensions.sh | bash
+
 ```
-2. This command downloads the script and pipes it directly to bash for execution. 
 
-- Tested in:
-1. Ubuntu 22.04 WLS2
-2. Ubuntu 22.04
+## Extensões Provisionadas (Baseline)
 
-## Updates
-- 20230515 - created extensions script and updated check.
-- 20230508 - created and updated check.
+A suíte instala automaticamente as seguintes ferramentas de produtividade e infraestrutura:
+
+* **Linguagens:** `golang.go`, `rust-lang.rust-analyzer`
+* **Infraestrutura e Cloud:** `hashicorp.terraform`, `amazonwebservices.aws-toolkit-vscode`
+* **Containers e Orquestração:** `ms-kubernetes-tools.vscode-kubernetes-tools`, `ms-azuretools.vscode-docker`, `redhat.vscode-yaml`
+* **CI/CD:** `github.vscode-github-actions`
+* **AI/Assistência:** `augment.vscode-augment`
+* **Documentação:** `bierner.markdown-mermaid`
+
+## Referências Oficiais
+
+O design destes scripts segue as melhores práticas e diretrizes das documentações oficiais:
+
+* [Visual Studio Code Command Line Interface (CLI)](https://code.visualstudio.com/docs/editor/command-line)
+* [Microsoft Docs: VSCode on Linux (GPG & APT Setup)](https://code.visualstudio.com/docs/setup/linux)
+* [Microsoft Docs: VSCode on macOS](https://code.visualstudio.com/docs/setup/mac)
+* [Unofficial Bash Strict Mode](http://redsymbol.net/articles/unofficial-bash-strict-mode/)
