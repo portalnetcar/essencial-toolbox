@@ -26,13 +26,11 @@ ensure_vscode_installed() {
 
     log_warn "VSCode não está instalado. Iniciando instalação automatizada..."
     
-    # Chama o script anterior de forma segura
     if ! curl -fsSL "${INSTALL_SCRIPT_URL}" | bash; then
         log_err "Falha catastrófica ao executar o script de instalação do VSCode."
         exit 1
     fi
 
-    # Validação pós-instalação
     if ! command -v code >/dev/null 2>&1; then
         log_err "A instalação relatou sucesso, mas o binário 'code' não está no PATH."
         exit 1
@@ -41,31 +39,30 @@ ensure_vscode_installed() {
 }
 
 manage_extensions() {
-    # Lista de extensões declarada de forma limpa
+    # Array consolidado com as extensões essenciais para Platform Engineering e AI
     local -a extensions=(
         "golang.go"
         "bierner.markdown-mermaid"
         "hashicorp.terraform"
-        # --- Sugestões para Engenharia de Plataforma / Cloud ---
-        # "amazonwebservices.aws-toolkit-vscode"
-        # "ms-kubernetes-tools.vscode-kubernetes-tools"
-        # "redhat.vscode-yaml" # Essencial para K8s, ArgoCD e Crossplane
-        # "ms-azuretools.vscode-docker"
-        # "github.vscode-github-actions"
+        "augment.vscode-augment"   # AI Coding Assistant
+        "rust-lang.rust-analyzer"  # Servidor de linguagem oficial e de alta performance para Rust
+        # --- Platform Engineering / Devops / Cloud ---
+        "amazonwebservices.aws-toolkit-vscode"
+        "ms-kubernetes-tools.vscode-kubernetes-tools"
+        "redhat.vscode-yaml" # Essencial para K8s, ArgoCD e Crossplane
+        "ms-azuretools.vscode-docker"
+        "github.vscode-github-actions"
     )
 
     log_info "Mapeando extensões atualmente instaladas (I/O único)..."
-    # Fazemos a chamada pesada apenas UMA VEZ e guardamos em memória
     local installed_extensions
     installed_extensions=$(code --list-extensions | tr '[:upper:]' '[:lower:]')
 
     for ext in "${extensions[@]}"; do
-        # Validação case-insensitive puramente em memória (super rápido)
         if echo "${installed_extensions}" | grep -qi "^${ext}$"; then
             log_info "Extensão '${ext}' já está instalada."
         else
             log_warn "Extensão '${ext}' ausente. Instalando..."
-            # A condicional avalia diretamente o exit status do comando
             if code --install-extension "${ext}" --force; then
                 log_info "Extensão '${ext}' instalada com sucesso!"
             else
